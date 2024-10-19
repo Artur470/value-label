@@ -64,7 +64,7 @@ class Product(models.Model):
     description = models.TextField(max_length=2551)
     is_product_of_the_day = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    characteristics = models.ManyToManyField('Characteristic', related_name='products', blank=True)
+    characteristics = models.ManyToManyField('Characteristic', related_name='products', )
 
     def save(self, *args, **kwargs):
         if self.quantity == 0:

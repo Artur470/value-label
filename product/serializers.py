@@ -46,7 +46,7 @@ class CategorySerializer(serializers.ModelSerializer):
             'хлебопечка': 'bread maker',
         }
 
-        # Используем значение объекта или, если его нет, значение метки
+
         if obj.value:
             return translation.get(obj.value, obj.value)
 
@@ -61,7 +61,7 @@ class ColorSerializer(serializers.ModelSerializer):
         fields = ['label', 'value']
 
     def get_value(self, obj):
-        # Словарь для перевода значений на английский
+
         translation = {
             'белый': 'white',
             'черный': 'black',
@@ -88,12 +88,12 @@ class ColorSerializer(serializers.ModelSerializer):
             'слоновая кость': 'ivory',
         }
 
-        # Проверяем, есть ли значение
+
         if obj.value:
-            # Возвращаем значение на английском, если оно есть в словаре
+
             return translation.get(obj.value, obj.value)
 
-        # Если значения нет, возвращаем значение на английском по label
+
         return translation.get(obj.label.lower(), obj.label.lower())
 
 class BrandSerializer(serializers.ModelSerializer):

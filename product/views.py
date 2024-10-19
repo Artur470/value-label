@@ -215,7 +215,7 @@ class ProductListView(generics.ListAPIView):
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ProductFilter
-    search_fields = ['title', 'description', 'price', 'promotion', 'category__label']
+    search_fields = ['title', 'category__label']
 
     @swagger_auto_schema(
         tags=['product'],
@@ -232,44 +232,47 @@ class ProductListView(generics.ListAPIView):
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
+        # Используем базовый queryset
         queryset = super().get_queryset()
 
         # Получаем значения фильтров из параметров запроса
+        all_value = self.request.query_params.get('all', '').lower() == 'true'
+
+        # Если all установлен в true, возвращаем все продукты
+        if all_value:
+            return Product.objects.all()  # Вернуть все продукты
+
+        # Инициализируем Q-объекты для комбинирования фильтров
+        filters = Q(is_active=True)  # Добавляем фильтрацию по активности по умолчанию
+
+        # Получаем значения других фильтров
         category_value = self.request.query_params.get('category', '').strip()
         brand_value = self.request.query_params.get('brand', '').strip()
         color_value = self.request.query_params.get('color', '').strip()
         search_value = self.request.query_params.get('search', '').strip()
 
-        # Инициализируем Q-объекты для комбинирования фильтров
-        filters = Q()
-
         # Фильтрация по существующим категориям
         if category_value:
-            if Category.objects.filter(value__iexact=category_value).exists():
-                filters &= Q(category__value__iexact=category_value)
+            filters &= Q(category__value__iexact=category_value)
 
         # Фильтрация по существующим брендам
         if brand_value:
-            if Brand.objects.filter(value__iexact=brand_value).exists():
-                filters &= Q(brand__value__iexact=brand_value)
+            filters &= Q(brand__value__iexact=brand_value)
 
         # Фильтрация по существующим цветам
         if color_value:
-            if Color.objects.filter(value__iexact=color_value).exists():
-                filters &= Q(color__value__iexact=color_value)
+            filters &= Q(color__value__iexact=color_value)
 
         # Если есть параметр поиска, добавляем его в фильтры
         if search_value:
-            filters &= Q(title__icontains=search_value) | Q(description__icontains=search_value) | \
-                       Q(price__icontains=search_value) | Q(promotion__icontains=search_value) | \
-                       Q(category__label__icontains=search_value)
+            filters &= (Q(title__icontains=search_value) |
+                        Q(description__icontains=search_value) |
+                        Q(price__icontains=search_value) |
+                        Q(promotion__icontains=search_value) |
+                        Q(category__label__icontains=search_value))
 
         # Применяем комбинированные фильтры к queryset
-        queryset = queryset.filter(filters)
-
-        return queryset
-
-
+        return queryset.filter(filters)
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
