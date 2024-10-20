@@ -146,7 +146,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'  # Лучше оставить '/static/', если это не противоречит вашему проекту
+STATIC_URL = '/staticfiles/'  # Лучше оставить '/static/', если это не противоречит вашему проекту
 
 # Директории, где будут искаться статические файлы
 STATICFILES_DIRS = [
@@ -154,7 +154,7 @@ STATICFILES_DIRS = [
 ]
 
 # Путь к директории, куда будут собираться статические файлы
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 
@@ -241,6 +241,7 @@ CORS_ALLOW_METHODS = [
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': config('CLOUDINARY_API_KEY'),
@@ -250,3 +251,16 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MEDIA_URL = '/media/'
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Basic': {
+            'type': 'basic'
+      },
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
