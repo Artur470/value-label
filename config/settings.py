@@ -24,7 +24,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
+
 
 
 
@@ -138,27 +139,20 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
+STATIC_URL = '/static/'  # URL для доступа к статическим файлам
 
-STATIC_URL = '/staticfiles/'  # Лучше оставить '/static/', если это не противоречит вашему проекту
-
-# Директории, где будут искаться статические файлы
+# Директории, где будут искаться статические файлы до сбора в STATIC_ROOT
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticfiles'),  # Путь к папке с статическими файлами
+    os.path.join(BASE_DIR, 'static'),  # Путь к вашей папке с исходными статическими файлами
 ]
 
-# Путь к директории, куда будут собираться статические файлы
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-
-
-# AUTH_USER_MODEL = 'users.User'
-
+# Путь к директории, куда будут собираться статические файлы для продакшена
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Папка для собранных статических файлов
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
@@ -166,10 +160,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',  # Добавьте JSON рендеринг по умолчанию
+    ),
 }
-
-
-
 
 
 REST_AUTH = {
