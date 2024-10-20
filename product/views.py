@@ -235,7 +235,7 @@ class ProductListView(generics.ListAPIView):
         # Используем базовый queryset
         queryset = super().get_queryset()
 
-        # Получаем значения фильтров из параметров запроса
+        # Получаем значение фильтра "все"
         all_value = self.request.query_params.get('all', '').lower() == 'true'
 
         # Если all установлен в true, возвращаем все продукты

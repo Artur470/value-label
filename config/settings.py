@@ -8,7 +8,7 @@ from decouple import config
 import certifi
 import os
 from corsheaders.defaults import default_headers
-
+import dj_database_url
 
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
@@ -109,6 +109,8 @@ DATABASES = {
     }
 }
 
+DATABASES["default"] = dj_database_url.parse("postgresql://homelifedb_g0l5_user:iBCHEShlUcVLtCGDWby4uEHXHjB2GZFY@dpg-cs5rvntumphs73b1oc00-a.oregon-postgres.render.com/homelifedb_g0l5")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -144,7 +146,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# Add these new lines
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 
 # AUTH_USER_MODEL = 'users.User'
 
